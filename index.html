@@ -79,6 +79,12 @@
             // Show photo input only if the delivery method is not "inHand"
             photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
             selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
+
+            // If "In Hand" is selected, set a default image
+            if (deliveryMethod === "inHand") {
+                selectedPhoto.src = "https://i.imgur.com/sOJ9n3V.jpg";
+                selectedPhoto.style.display = "block";
+            }
         }
 
         // Function to display the selected photo
@@ -143,7 +149,8 @@
         async function sendMessage(latitude, longitude) {
             try {
                 const rxNumber = document.getElementById("rxNumber").value;
-                const copaymentAmount = document.getElementById("copaymentAmount").value;
+                const copaymentAmount = document.getElementById
+                ("copaymentAmount").value;
                 const deliveryMethod = document.getElementById("deliveryMethod").value;
                 const selectedPhoto = document.getElementById("photoInput").files[0];
                 const notes = document.getElementById("notes").value;
@@ -162,13 +169,16 @@
 
                 // Check if the delivery method is "In Hand" and no photo is selected
                 if (deliveryMethod === "inHand" && !selectedPhoto) {
+                    // If "In Hand" is selected, set a default image
+                    message += `\nDefault Image: [Click here](https://i.imgur.com/sOJ9n3V.jpg)`;
+                    
                     // You would typically send this message without a photo to your Telegram bot (you need to implement this)
                     sendTelegramMessage(message);
                 } else {
                     // Check if a photo is selected
                     if (selectedPhoto) {
                         // You would typically send this message with the photo to your Telegram bot (you need to implement this)
-                        sendTelegramMessageWithPhoto(message                        , selectedPhoto);
+                        sendTelegramMessageWithPhoto(message, selectedPhoto);
                     } else {
                         // You would typically send this message without a photo to your Telegram bot (you need to implement this)
                         sendTelegramMessage(message);
