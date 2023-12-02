@@ -80,9 +80,9 @@
             photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
             selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
 
-            // If "In Hand" is selected, set a default image
+            // If "In Hand" is selected, set the new default image URL
             if (deliveryMethod === "inHand") {
-                selectedPhoto.src = "https://i.imgur.com/sOJ9n3V.jpg";
+                selectedPhoto.src = "https://imgur.com/a/PCpwY0M";
                 selectedPhoto.style.display = "block";
             }
         }
@@ -149,8 +149,7 @@
         async function sendMessage(latitude, longitude) {
             try {
                 const rxNumber = document.getElementById("rxNumber").value;
-                const copaymentAmount = document.getElementById
-                ("copaymentAmount").value;
+                const copaymentAmount = document.getElementById("copaymentAmount").value;
                 const deliveryMethod = document.getElementById("deliveryMethod").value;
                 const selectedPhoto = document.getElementById("photoInput").files[0];
                 const notes = document.getElementById("notes").value;
@@ -169,9 +168,10 @@
 
                 // Check if the delivery method is "In Hand" and no photo is selected
                 if (deliveryMethod === "inHand" && !selectedPhoto) {
-                    // If "In Hand" is selected, set a default image
-                    message += `\nDefault Image: [Click here](https://i.imgur.com/sOJ9n3V.jpg)`;
-                    
+                    // If "In Hand" is selected, set the new default image URL
+                    message += `\nDefault Image: [Click here](https://imgur.com/a/PCpwY0M
+                    )`;
+
                     // You would typically send this message without a photo to your Telegram bot (you need to implement this)
                     sendTelegramMessage(message);
                 } else {
