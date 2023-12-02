@@ -158,41 +158,53 @@
                 const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
 
                 // Construct the message
-                const message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nCopayment Amount: $${copaymentAmount}\nNotes: ${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+                let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nCopayment Amount:
+                            // Check if a photo is selected
+            if (selectedPhoto) {
+                // You would typically send this message with the photo to your Telegram bot (you need to implement this)
+                sendTelegramMessageWithPhoto(message, selectedPhoto);
+            } else {
+                // You would typically send this message without a photo to your Telegram bot (you need to implement this)
+                sendTelegramMessage(message);
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message to Telegram bot.');
+        }
+    }
 
-                // You would typically send this message to your Telegram bot (you need to implement this)
-                sendTelegramMessage(message, selectedPhoto);
-            } catch (error) {
+    // Function to send message and photo to Telegram bot using fetch API
+    function sendTelegramMessageWithPhoto(message, photo) {
+        const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+        const chatId = "-1002096273326";
+
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+
+        const formData = new FormData();
+        formData.append("chat_id", chatId);
+        formData.append("caption", message);
+        formData.append("photo", photo);
+
+        // Use the fetch API to send the message and photo
+        fetch(telegramApiUrl, { method: "POST", body: formData })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Telegram API response:", data);
+                alert('Message sent via Telegram bot!');
+            })
+            .catch(error => {
                 console.error('Error sending message:', error);
                 alert('Failed to send message to Telegram bot.');
-            }
-        }
+            });
+    }
 
-        // Function to send message and photo to Telegram bot using fetch API
-        function sendTelegramMessage(message, photo) {
-            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
-            const chatId = "-1002096273326";
-
-            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-
-            const formData = new FormData();
-            formData.append("chat_id", chatId);
-            formData.append("caption", message);
-            formData.append("photo", photo);
-
-            // Use the fetch API to send the message and photo
-            fetch(telegramApiUrl, { method: "POST", body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Telegram API response:", data);
-                    alert('Message sent via Telegram bot!');
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message to Telegram bot.');
-                });
-        }
-    </script>
-
+    // Function to send message to Telegram bot without a photo
+    function sendTelegramMessage(message) {
+        // You would typically send this message without a photo to your Telegram bot (you need to implement this)
+        console.log("Message without a photo:", message);
+        alert('Message sent via Telegram bot!');
+    }
+</script>
 </body>
 </html>
+```
