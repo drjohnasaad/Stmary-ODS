@@ -169,28 +169,11 @@
                 // Check if the delivery method is "In Hand"
                 if (deliveryMethod === "inHand") {
                     // Include the default photo URL
-                    message += `\nDefault Image: [Click here](https://imgur.com/a/PCpwY0M)`;
+                    message += `\nDefault Image:(https://imgur.com/a/PCpwY0M)`;
                 }
 
                 // Check if the delivery method is "In Hand" and no photo is selected
-                if (deliveryMethod === "inHand" && !selectedPhoto) {
-                    // You would typically send this message without a photo to your Telegram bot (you need to implement this)
-                    sendTelegramMessage(message);
-                } else {
-                    // Check if a photo is selected
-                    if (selectedPhoto) {
-                        // You would typically send this message with the photo to your Telegram bot (you need to implement this)
-                        sendTelegramMessageWithPhoto(message, selectedPhoto);
-                    } else {
-                        // You would typically send this message without a photo to your Telegram bot (you need to implement this)
-                        sendTelegramMessage(message);
-                    }
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('Failed to send message to Telegram bot.');
-            }
-        }
+                
 
         // Function to send message and photo to Telegram bot using fetch API
         function sendTelegramMessageWithPhoto(message, photo) {
