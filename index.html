@@ -164,18 +164,9 @@
                 const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
 
                 // Construct the message
-                let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nCopayment Amount: $${copaymentAmount}\nNotes: ${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+                let message = `Rx: ${rxNumber}\nLocation: ${address}\nOn Map: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nCopayment: $${copaymentAmount}\nNotes: ${notes}\nDate: ${formattedDate} on ${formattedTime}`;
 
-                // Check if the delivery method is "In Hand"
-                if (deliveryMethod === "inHand") {
-                    // Include the default photo URL
-                    message += `\nDefault Image:(https://imgur.com/a/PCpwY0M)`;
-                }
-
-                // Check if the delivery method is "In Hand" and no photo is selected
                 
-
-        // Function to send message and photo to Telegram bot using fetch API
         function sendTelegramMessageWithPhoto(message, photo) {
             const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
             const chatId = "-1002096273326";
@@ -199,11 +190,8 @@
                     alert('Failed to send message to Telegram bot.');
                 });
         }
-
         // Function to send message to Telegram bot without a photo
-        function sendTelegramMessage(message) {
-            // You would typically send this message without a photo to your Telegram bot (you need to implement this)
-            console.log("Message without a photo:", message);
+        function sendTelegramMessage(message) 
             alert('Message sent via Telegram bot!');
         }
     </script>
