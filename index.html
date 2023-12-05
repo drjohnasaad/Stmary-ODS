@@ -49,7 +49,7 @@
 
     <form id="deliveryForm">
         <label for="rxNumber">Rx Number:</label>
-        <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9&]*|OTC ORDER" title="Only numbers, '&' sign, or 'OTC ORDER' allowed">
+        <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9]*" inputmode="numeric" title="Only numbers allowed">
 
         <label for="copaymentAmount">Copayment Amount ($):</label>
         <input type="number" id="copaymentAmount" name="copaymentAmount" value="0">
