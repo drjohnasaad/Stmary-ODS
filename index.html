@@ -49,7 +49,7 @@
 
     <form id="deliveryForm">
         <label for="rxNumber">Rx Number:</label>
-        <input type="text" id="rxNumber" name="rxNumber">
+        <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9&]*|OTC ORDER" title="Only numbers, '&' sign, or 'OTC ORDER' allowed">
 
         <label for="copaymentAmount">Copayment Amount ($):</label>
         <input type="number" id="copaymentAmount" name="copaymentAmount" value="0">
@@ -63,10 +63,7 @@
         </select>
 
         <!-- Photo input -->
-        <label for="photoInput" style="cursor: pointer;">
-    Take a Photo
-    <input type="file" accept="image/*" id="photoInput" capture="camera" style="display: none;">
-</label>
+       
         <input type="file" accept="image/*" id="photoInput" capture="camera">
 
         <!-- Display the selected photo -->
