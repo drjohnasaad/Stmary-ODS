@@ -168,9 +168,7 @@
         selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
 
         // If "In Hand" is selected, set the default image URL
-        if (deliveryMethod === "inHand") {
-            selectedPhoto.src = "https://raw.githubusercontent.com/drjohnasaad/Stmary-ODS/main/IMG_1662.webp";
-            selectedPhoto.style.display = "block";
+        
         }
     }
 
@@ -280,7 +278,7 @@
             const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
 
             // Construct the message
-            let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+            let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nNotes:${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
 
             // You would typically send this message to your Telegram bot (you need to implement this)
             if (selectedPhoto) {
