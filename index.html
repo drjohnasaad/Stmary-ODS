@@ -128,7 +128,7 @@
         <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional notes"></textarea>
 
         <div class="buttons">
-            <button type="button" onclick="getCurrentLocation(),sendTelegramMessage(message)">Submit</button>
+            <button type="button" onclick="getCurrentLocation() then sendTelegramMessageWithPhoto(message, photo)">Submit</button>
         </div>
     </form>
 
@@ -176,31 +176,7 @@
         function getCurrentLocation() {
             // Implement location retrieval logic here
             alert("Location obtained. Submitting form...");
-            // Add your logic for sending the message to Telegram here
-
-     // Function to send message to Telegram bot without a photo
-        function sendTelegramMessage(message) {
-            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
-            const chatId = "-1002096273326";
-
-            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-            const formData = new FormData();
-            formData.append("chat_id", chatId);
-            formData.append("text", message);
-
-            // Use the fetch API to send the message
-            fetch(telegramApiUrl, { method: "POST", body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Telegram API response:", data);
-                    alert('Message sent via Telegram bot!');
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message to Telegram bot.');
-                });
-        }
+            // Add your logic for sending the message to Telegram 
 
         // Function to send message to Telegram bot with photo
         function sendTelegramMessageWithPhoto(message, photo) {
