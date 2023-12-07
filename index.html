@@ -167,11 +167,7 @@
         photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
         selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
 
-        // If "In Hand" is selected, set the default image URL
-        if (deliveryMethod === "inHand") {
-            selectedPhoto.src = "https://raw.githubusercontent.com/drjohnasaad/Stmary-ODS/main/IMG_1662.webp";
-            selectedPhoto.style.display = "block";
-        }
+    
     }
 
     // Function to initiate barcode scanning using quaggaJS library
