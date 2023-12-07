@@ -274,7 +274,7 @@
                 const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
 
                 // Construct the message
-                const message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+                const message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nnotes:${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
 
                 // You would typically send this message to your Telegram bot (you need to implement this)
                 sendTelegramMessage(message, selectedPhoto);
