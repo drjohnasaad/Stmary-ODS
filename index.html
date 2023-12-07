@@ -128,7 +128,7 @@
         <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional notes"></textarea>
 
         <div class="buttons">
-            <button type="button" onclick="sendTelegramMessageWithPhoto(message, photo)">Submit</button>
+            <button type="button" onclick="getCurrentLocation()">Submit</button>
         </div>
     </form>
 
@@ -137,7 +137,7 @@
             Quagga.init({
                 inputStream: {
                     name: "Live",
-                    type: "LiveStream",
+                    type:"LiveStream",
                     target: document.querySelector("#selectedPhoto"), // Display the scanned image here
                 },
                 decoder: {
@@ -174,48 +174,78 @@
         }
 
         function getCurrentLocation() {
-            // Implement location retrieval logic here
-            alert("Location obtained. Submitting form...");
-            // Add your logic for sending the message to Telegram 
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
 
-        // Function to send message to Telegram bot with photo
-        function sendTelegramMessageWithPhoto(message, photo) {
-            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
-            const chatId = "-1002096273326";
-
-            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-
-            const formData = new FormData();
-            formData.append("chat_id", chatId);
-            formData.append("caption", message);
-            formData.append("photo", photo);
-
-            // Use the fetch API to send the message and photo
-            fetch(telegramApiUrl, { method: "POST", body: formData })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Telegram API response:", data);
-                    alert('Message sent via Telegram bot!');
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message to Telegram bot.');
-                });
+                        // Call function to send message with obtained location
+                        sendMessage(latitude, longitude);
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        alert('Failed to get current location. Please enable GPS and try again.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
         }
 
-        // Function to copy Rx Number to clipboard
-        function copyRxNumberToClipboard() {
-            const rxNumber = document.getElementById("rxNumber").value;
-            navigator.clipboard.writeText(rxNumber)
-                .then(() => {
-                    console.log('Rx Number copied to clipboard:', rxNumber);
-                    alert('Rx Number copied to clipboard!');
-                })
-                .catch(error => {
-                    console.error('Error copying Rx Number to clipboard:', error);
-                    alert('Failed to copy Rx Number to clipboard.');
-                });
+        async function getAddressFromLocation(latitude, longitude) {
+            // Implement your logic to get address from latitude and longitude
+            // You can use reverse geocoding services or other methods
+            // This function should return the obtained address
+            // For example, you can use an API like OpenCage Geocoding API
+            // Here, a placeholder "Your Address" is used for demonstration
+            return "Your Address";
         }
-    </script>
-</body>
-</html>
+
+        function sendMessage(latitude, longitude) {
+            try {
+                const rxNumber = document.getElementById("rxNumber").value;
+                const deliveryMethod = document.getElementById("deliveryMethod").value;
+                const selectedPhoto = document.getElementById("photoInput").files[0];
+
+                getAddressFromLocation(latitude, longitude).then(address => {
+                    const currentDate = new Date();
+                    const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+                    const                // Construct the Bing Maps link
+                const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
+
+                // Replace [Your Address] with the obtained address
+                const message = `Rx: ${rxNumber}\nGeolocation Address: ${address}\nHow Delivered: ${deliveryMethod}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+
+                // Call function to send message to Telegram with the constructed message
+                sendTelegramMessage(message, selectedPhoto);
+            });
+        } catch (error) {
+            console.error('Error sending message:', error);
+            alert('Failed to send message to Telegram bot.');
+        }
+    }
+
+    function sendTelegramMessage(message, photo) {
+        const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+        const chatId = "-1002096273326";
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+
+        const formData = new FormData();
+        formData.append("chat_id", chatId);
+        formData.append("caption", message);
+        formData.append("photo", photo);
+
+        // Use the fetch API to send the message and photo
+        fetch(telegramApiUrl, { method: "POST", body: formData })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Telegram API response:", data);
+                alert('Message sent via Telegram bot!');
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('Failed to send message to Telegram bot.');
+            });
+    }
+</script>
