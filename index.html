@@ -4,137 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>St Mary Pharmacy Delivery System</title>
-    <link rel="icon" href="https://github.com/drjohnasaad/Stmary-ODS/blob/main/Breaking%20News.jpeg?raw=true" type="image/x-icon">
-
     <style>
         body {
-            background-color: #333;
+            background-color: black;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             text-align: center;
             padding: 50px;
             border: 2px solid white;
             border-radius: 20px;
         }
 
-        label, input {
+        label, select, input {
             display: block;
             margin: 10px auto;
-            color: #BBB;
         }
 
-        input {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #444;
-            color: white;
+        select, input {
+            padding: 5px;
         }
 
         #photoInput {
             display: none;
         }
 
-        div.buttons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
         button {
-            background-color: #800080;
+            background-color: purple;
             color: white;
             border: none;
             padding: 15px;
             cursor: pointer;
-            border-radius: 5px;
-            width: 100px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #9932CC;
-        }
-
-        img#selectedPhoto {
-            display: none;
-            max-width: 300px;
-            margin-top: 10px;
-        }
-
-        #notes {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #444;
-            color: white;
-        }
-
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-color: #444;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-        }
-
-        select:focus {
-            outline: none;
-        }
-
-        select::-ms-expand {
-            display: none;
+            display: block;
+            margin: 15px auto;
+            border-radius: 10px;
+            width: 200px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
 </head>
 <body>
-
     <h1>St Mary Pharmacy Delivery System</h1>
 
     <form id="deliveryForm">
         <label for="rxNumber">Rx Number:</label>
-        <div class="buttons">
-            <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9]*" inputmode="numeric" title="Only numbers allowed">
-            <button type="button" onclick="initiateBarcodeScanner()">Scan</button>
-            <button type="button" onclick="copyRxNumberToClipboard()">Copy</button>
-        </div>
+        <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9]*" inputmode="numeric" title="Only numbers allowed">
 
         <label for="copaymentAmount">Copayment Amount ($):</label>
         <input type="text" id="copaymentAmount" name="copaymentAmount" pattern="\d*" inputmode="numeric" value="0">
 
         <label for="deliveryMethod">How Delivered:</label>
-        <div class="buttons">
-            <select id="deliveryMethod" name="deliveryMethod" onchange="showPhotoInput()">
-                <option value="inHand">In Hand</option>
-                <option value="atDoor">At the Door</option>
-                <option value="behindShield">Behind the Shield Door</option>
-                <option value="inMailbox">In the Mailbox</option>
-            </select>
-        </div>
+        <select id="deliveryMethod" name="deliveryMethod" size="4" onchange="showPhotoInput()">
+            <option value="inHand">In Hand</option>
+            <option value="atDoor">At the Door</option>
+            <option value="behindShield">Behind the Shield Door</option>
+            <option value="inMailbox">In the Mailbox</option>
+        </select>
 
-        <div class="buttons">
-            <input type="file" accept="image/*" id="photoInput" capture="camera">
-            <img id="selectedPhoto" alt="Selected Photo">
-        </div>
+        <!-- Photo input -->
+        <input type="file" accept="image/*" id="photoInput" capture="camera">
+
+        <!-- Display the selected photo -->
+        <img id="selectedPhoto" alt="Selected Photo" style="display: none; max-width: 300px; margin-top: 10px;">
 
         <label for="notes">Notes:</label>
         <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional notes"></textarea>
 
-        <div class="buttons">
-            <button type="button" onclick="getCurrentLocation()">Submit</button>
-        </div>
+        <!-- Barcode scanner button -->
+        <button type="button" onclick="initiateBarcodeScanner()">Initiate Barcode Scanner</button>
+
+        <!-- Copy to Clipboard button -->
+        <button type="button" onclick="copyRxNumberToClipboard()">Copy to Clipboard</button>
+
+        <!-- Submit button -->
+        <button type="button" onclick="getCurrentLocation()">Submit</button>
     </form>
 
     <script>
         function initiateBarcodeScanner() {
-            // Implement barcode scanning logic here
-            alert("Barcode scanning initiated.");
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector("#selectedPhoto"), // Display the scanned image here
+                },
+                decoder: {
+                    readers: ["ean_reader"],
+                },
+            }, function (err) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                Quagga.start();
+            });
         }
 
         function copyRxNumberToClipboard() {
@@ -159,8 +121,10 @@
         }
 
         function getCurrentLocation() {
-            // Implement location retrieval logic here
-            alert("Location obtained. Submitting form...");
+            // Your existing code for getting the current location and sending the message
+            // ...
+
+            // After obtaining the location, call sendMessage(latitude, longitude);
         }
     </script>
 </body>
