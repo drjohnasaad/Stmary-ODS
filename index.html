@@ -177,6 +177,72 @@
             // Implement location retrieval logic here
             alert("Location obtained. Submitting form...");
             // Add your logic for sending the message to Telegram here
+
+     // Function to send message to Telegram bot without a photo
+        function sendTelegramMessage(message) {
+            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+            const chatId = "-1002096273326";
+
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append("text", message);
+
+            // Use the fetch API to send the message
+            fetch(telegramApiUrl, { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Telegram API response:", data);
+                    alert('Message sent via Telegram bot!');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message to Telegram bot.');
+                });
+        }
+
+        // Function to send message to Telegram bot with photo
+        function sendTelegramMessageWithPhoto(message, photo) {
+            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+            const chatId = "-1002096273326";
+
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append("caption", message);
+            formData.append("photo", photo);
+
+            // Use the fetch API to send the message and photo
+            fetch(telegramApiUrl, { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Telegram API response:", data);
+                    alert('Message sent via Telegram bot!');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message to Telegram bot.');
+                });
+        }
+
+        // Function to copy Rx Number to clipboard
+        function copyRxNumberToClipboard() {
+            const rxNumber = document.getElementById("rxNumber").value;
+            navigator.clipboard.writeText(rxNumber)
+                .then(() => {
+                    console.log('Rx Number copied to clipboard:', rxNumber);
+                    alert('Rx Number copied to clipboard!');
+                })
+                .catch(error => {
+                    console.error('Error copying Rx Number to clipboard:', error);
+                    alert('Failed to copy Rx Number to clipboard.');
+                });
+        }
+
+
+
         }
     </script>
 </body>
