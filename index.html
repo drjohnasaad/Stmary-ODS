@@ -157,6 +157,92 @@
     </form>
 
         <script>
+<!-- Add the quaggaJS library -->
+<script src="https://cdn.rawgit.com/serratus/quaggaJS/0.12.1/dist/quagga.min.js"></script>
+
+<script>
+    // Function to show/hide photo input based on selected delivery method
+    function showPhotoInput() {
+        const deliveryMethod = document.getElementById("deliveryMethod").value;
+        const photoInput = document.getElementById("photoInput");
+        const selectedPhoto = document.getElementById("selectedPhoto");
+
+        // Show photo input only if the delivery method is not "inHand"
+        photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
+        selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
+
+        // If "In Hand" is selected, set the default image URL
+        if (deliveryMethod === "inHand") {
+            selectedPhoto.src = "https://raw.githubusercontent.com/drjohnasaad/Stmary-ODS/main/IMG_1662.webp";
+            selectedPhoto.style.display = "block";
+        }
+    }
+
+    // Function to initiate barcode scanning using quaggaJS library
+    function scanBarcode() {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#barcodeScanner'),
+                constraints: {
+                    width: 480,
+                    height: 320,
+                },
+            },
+            decoder: {
+                readers: ["code_128_reader", "ean_reader", "upc_reader"],
+            },
+        }, function (err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function (result) {
+            const scannedRxNumber = result.codeResult.code;
+            document.getElementById("rxNumber").value = scannedRxNumber;
+            document.getElementById("scannedRxNumber").innerText = "Scanned Rx: " + scannedRxNumber;
+
+            Quagga.stop();
+        });
+    }
+
+    // Function to copy Rx number to clipboard
+    function copyRxToClipboard() {
+        const rxNumberInput = document.getElementById("rxNumber");
+        rxNumberInput.select();
+        document.execCommand("copy");
+        alert("Rx number copied to clipboard!");
+    }
+
+    // Function to prompt user for GPS location
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Call function to send message with obtained location
+                    sendMessage(latitude, longitude);
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                    alert('Failed to get current location. Please enable GPS and try again.');
+                }
+            );
+        } else {
+            alert('Geolocation is not supported by your browser.');
+        }
+    
+    
+
+
+            
         // Function to show/hide photo input based on selected delivery method
         function showPhotoInput() {
             const deliveryMethod = document.getElementById("deliveryMethod").value;
