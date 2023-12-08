@@ -38,7 +38,7 @@
             box-sizing: border-box;
         }
 
-        label, select, input {
+        label, select, input, button, textarea {
             display: block;
             width: 100%;
             margin: 10px 0;
@@ -48,6 +48,11 @@
             background-color: #2c3e50;
             color: #ecf0f1;
             box-sizing: border-box;
+        }
+
+        select, textarea {
+            height: 40px;
+            resize: none;
         }
 
         select:focus, input:focus, textarea:focus {
@@ -66,11 +71,6 @@
 
         button {
             background-color: #3498db;
-            color: #ecf0f1;
-            border: none;
-            padding: 15px;
-            border-radius: 5px;
-            width: 100%;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -79,8 +79,11 @@
             background-color: #2980b9;
         }
 
-        #scannedRxNumber {
+        #barcodeScanner, #scannedRxNumber, #buttonContainer {
             margin-top: 10px;
+        }
+
+        #scannedRxNumber {
             color: #6a1b9a;
             font-weight: bold;
         }
@@ -94,18 +97,6 @@
 
         #buttonContainer button {
             margin-top: 10px;
-        }
-
-        textarea {
-            width: 100%;
-            margin: 10px 0;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            resize: none;
-            box-sizing: border-box;
         }
     </style>
 
@@ -156,190 +147,185 @@
         <button type="button" onclick="getCurrentLocation()">Submit</button>
     </form>
 
-<script>
-    // Function to show/hide photo input based on selected delivery method
-    function showPhotoInput() {
-        const deliveryMethod = document.getElementById("deliveryMethod").value;
-        const photoInput = document.getElementById("photoInput");
-        const selectedPhoto = document.getElementById("selectedPhoto");
-
-        // Show photo input only if the delivery method is not "inHand"
-        photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
-        selectedPhoto.style.display = "none"; // Hide the selected photo if the delivery method changes
-
-        // If "In Hand" is selected, set the default image URL
-        
-        }
-    }
-
-    // Function to initiate barcode scanning using quaggaJS library
-    function scanBarcode() {
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: document.querySelector('#barcodeScanner'),
-                constraints: {
-                    width: 100,
-                    height: 100,
-                },
-            },
-            decoder: {
-                readers: ["code_128_reader", "ean_reader", "upc_reader"],
-            },
-        }, function (err) {
-            if (err) {
-                console.error(err);
-                return;
-            }
-
-            Quagga.start();
-        });
-
-        Quagga.onDetected(function (result) {
-            const scannedRxNumber = result.codeResult.code;
-            document.getElementById("rxNumber").value = scannedRxNumber;
-            document.getElementById("scannedRxNumber").innerText = "Scanned Rx: " + scannedRxNumber;
-
-            Quagga.stop();
-        });
-    }
-
-    // Function to copy Rx number to clipboard
-    function copyRxToClipboard() {
-        const rxNumberInput = document.getElementById("rxNumber");
-        rxNumberInput.select();
-        document.execCommand("copy");
-        alert("Rx number copied to clipboard!");
-    }
-
-    // Function to prompt user for GPS location
-    function getCurrentLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-
-                    // Call function to send message with obtained location
-                    sendMessage(latitude, longitude);
-                },
-                (error) => {
-                    console.error('Error getting location:', error);
-                    alert('Failed to get current location. Please enable GPS and try again.');
-                }
-            );
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
-    }
-
-    // Function to convert latitude and longitude to address using Bing Maps API
-    async function getAddressFromLocation(latitude, longitude) {
-        const apiKey = 'AgJByZBI9tU_t6bMrFcSycB-RNlS8uCQcMQssXD8TH7czDq0plnAu9pDXEePtU6W';
-        const apiUrl = `https://dev.virtualearth.net/REST/v1/Locations/${latitude},${longitude}?o=json&key=${apiKey}`;
-
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-
-            if (data && data.resourceSets && data.resourceSets.length > 0 &&
-                data.resourceSets[0].resources && data.resourceSets[0].resources.length > 0) {
-                const address = data.resourceSets[0].resources[0].address.formattedAddress;
-                return address;
-            } else {
-                throw new Error('Failed to fetch address from Bing Maps API');
-            }
-        } catch (error) {
-            console.error('Error fetching address:', error);
-            throw error;
-        }
-    }
-
-    // Function to send message via Telegram bot with or without a photo
-    async function sendMessage(latitude, longitude) {
-        try {
-            const rxNumber = document.getElementById("rxNumber").value;
+    <script>
+        // Function to show/hide photo input based on selected delivery method
+        function showPhotoInput() {
             const deliveryMethod = document.getElementById("deliveryMethod").value;
-
-            let selectedPhoto = null;
             const photoInput = document.getElementById("photoInput");
-            if (photoInput.files.length > 0) {
-                selectedPhoto = photoInput.files[0];
-            }
 
-            const address = await getAddressFromLocation(latitude, longitude); // Fetch address
-
-            const currentDate = new Date();
-            const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-            const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-            // Construct the Bing Maps link
-            const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
-
-            // Construct the message
-            let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nNotes:${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
-
-            // You would typically send this message to your Telegram bot (you need to implement this)
-            if (selectedPhoto) {
-                sendTelegramMessageWithPhoto(message, selectedPhoto);
-            } else {
-                sendTelegramMessage(message);
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
-            alert('Failed to send message to Telegram bot.');
+            // Show photo input only if the delivery method is not "inHand"
+            photoInput.style.display = (deliveryMethod !== "inHand") ? "block" : "none";
         }
-    }
 
-    // Function to send message and photo to Telegram bot using fetch API
-    function sendTelegramMessageWithPhoto(message, photo) {
-        const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
-        const chatId = "-1002096273326";
+        // Function to initiate barcode scanning using quaggaJS library
+        function scanBarcode() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#barcodeScanner'),
+                    constraints: {
+                        width: 200,
+                        height: 100,
+                    },
+                },
+                decoder: {
+                    readers: ["code_128_reader", "ean_reader", "upc_reader"],
+                },
+            }, function (err) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
 
-        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+                Quagga.start();
+            });
 
-        const formData = new FormData();
-        formData.append("chat_id", chatId);
-        formData.append("caption", message);
-        formData.append("photo", photo);
+            Quagga.onDetected(function (result) {
+                const scannedRxNumber = result.codeResult.code;
+                document.getElementById("rxNumber").value = scannedRxNumber;
+                document.getElementById("scannedRxNumber").innerText = "Scanned Rx: " + scannedRxNumber;
 
-        // Use the fetch API to send the message and photo
-        fetch(telegramApiUrl, { method: "POST", body: formData })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Telegram API response:", data);
-                alert('Message sent via Telegram bot!');
-            })
-            .catch(error => {
+                Quagga.stop();
+            });
+        }
+
+        // Function to copy Rx number to clipboard
+        function copyRxToClipboard() {
+            const rxNumberInput = document.getElementById("rxNumber");
+            rxNumberInput.select();
+            document.execCommand("copy");
+            alert("Rx number copied to clipboard!");
+        }
+
+        // Function to prompt user for GPS location
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        // Call function to send message with obtained location
+                        sendMessage(latitude, longitude);
+                    },
+                    (error) => {                        console.error('Error getting location:', error);
+                        alert('Failed to get current location. Please enable GPS and try again.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        }
+
+        // Function to convert latitude and longitude to address using Bing Maps API
+        async function getAddressFromLocation(latitude, longitude) {
+            const apiKey = 'AgJByZBI9tU_t6bMrFcSycB-RNlS8uCQcMQssXD8TH7czDq0plnAu9pDXEePtU6W';
+            const apiUrl = `https://dev.virtualearth.net/REST/v1/Locations/${latitude},${longitude}?o=json&key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data && data.resourceSets && data.resourceSets.length > 0 &&
+                    data.resourceSets[0].resources && data.resourceSets[0].resources.length > 0) {
+                    const address = data.resourceSets[0].resources[0].address.formattedAddress;
+                    return address;
+                } else {
+                    throw new Error('Failed to fetch address from Bing Maps API');
+                }
+            } catch (error) {
+                console.error('Error fetching address:', error);
+                throw error;
+            }
+        }
+
+        // Function to send message via Telegram bot with or without a photo
+        async function sendMessage(latitude, longitude) {
+            try {
+                const rxNumber = document.getElementById("rxNumber").value;
+                const deliveryMethod = document.getElementById("deliveryMethod").value;
+                const notes = document.getElementById("notes").value;
+
+                let selectedPhoto = null;
+                const photoInput = document.getElementById("photoInput");
+                if (photoInput.files.length > 0) {
+                    selectedPhoto = photoInput.files[0];
+                }
+
+                const address = await getAddressFromLocation(latitude, longitude); // Fetch address
+
+                const currentDate = new Date();
+                const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+                const formattedTime = `${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+                // Construct the Bing Maps link
+                const mapsLink = `https://www.bing.com/maps?q=${latitude},${longitude}`;
+
+                // Construct the message
+                let message = `Rx: ${rxNumber}\nLocation: ${address}\nBing Maps: ${mapsLink}\nHow Delivered: ${deliveryMethod}\nNotes:${notes}\nDate & Time: ${formattedDate} on ${formattedTime}`;
+
+                // You would typically send this message to your Telegram bot (you need to implement this)
+                if (selectedPhoto) {
+                    sendTelegramMessageWithPhoto(message, selectedPhoto);
+                } else {
+                    sendTelegramMessage(message);
+                }
+            } catch (error) {
                 console.error('Error sending message:', error);
                 alert('Failed to send message to Telegram bot.');
-            });
-    }
+            }
+        }
 
-    // Function to send message to Telegram bot without a photo
-    function sendTelegramMessage(message) {
-        const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
-        const chatId = "-1002096273326";
+        // Function to send message and photo to Telegram bot using fetch API
+        function sendTelegramMessageWithPhoto(message, photo) {
+            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+            const chatId = "-1002096273326";
 
-        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
 
-        const formData = new FormData();
-        formData.append("chat_id", chatId);
-        formData.append("text", message);
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append("caption", message);
+            formData.append("photo", photo);
 
-        // Use the fetch API to send the message
-        fetch(telegramApiUrl, { method: "POST", body: formData })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Telegram API response:", data);
-                alert('Message sent via Telegram bot!');            })
-            .catch(error => {
-                console.error('Error sending message:', error);
-                alert('Failed to send message to Telegram bot.');
-            });
-    }
-</script>
+            // Use the fetch API to send the message and photo
+            fetch(telegramApiUrl, { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Telegram API response:", data);
+                    alert('Message sent via Telegram bot!');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message to Telegram bot.');
+                });
+        }
+
+        // Function to send message to Telegram bot without a photo
+        function sendTelegramMessage(message) {
+            const botToken = "6728550531:AAGYvCa4oJIQuL6cWk4uaXev2UhCF1Wjz2M";
+            const chatId = "-1002096273326";
+
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append("text", message);
+
+            // Use the fetch API to send the message
+            fetch(telegramApiUrl, { method: "POST", body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Telegram API response:", data);
+                    alert('Message sent via Telegram bot!');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message to Telegram bot.');
+                });
+        }
+    </script>
     
 </body>
 </html>
