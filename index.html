@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>St Mary Pharmacy Delivery System</title>
-    <link rel="icon" href="https://github.com/drjohnasaad/Stmary-ODS/blob/main/Breaking%20News.jpeg?raw=true" type="image/x-icon">
+    <link rel="icon" href="https://github.com/drjohnasaad/Stmary-ODS/blob/main/Breaking%20News.jpeg?raw=true"
+        type="image/x-icon">
 
     <style>
         body {
@@ -12,15 +14,10 @@
             color: #ecf0f1;
             font-family: 'Roboto', sans-serif;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
             border: 2px solid #3498db;
             border-radius: 20px;
             margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
 
         h1 {
@@ -28,9 +25,6 @@
         }
 
         form {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
             background-color: #34495e;
             padding: 20px;
             border-radius: 10px;
@@ -38,9 +32,11 @@
             box-sizing: border-box;
         }
 
-        label, select, input, button, textarea {
+        label,
+        select,
+        input {
             display: block;
-            width: 100%;
+            width: calc(100% - 20px);
             margin: 10px 0;
             padding: 10px;
             border: none;
@@ -50,12 +46,9 @@
             box-sizing: border-box;
         }
 
-        select, textarea {
-            height: 40px;
-            resize: none;
-        }
-
-        select:focus, input:focus, textarea:focus {
+        select:focus,
+        input:focus,
+        textarea:focus {
             outline: none;
         }
 
@@ -71,6 +64,11 @@
 
         button {
             background-color: #3498db;
+            color: #ecf0f1;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            width: calc(50% - 5px);
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -79,11 +77,8 @@
             background-color: #2980b9;
         }
 
-        #barcodeScanner, #scannedRxNumber, #buttonContainer {
-            margin-top: 10px;
-        }
-
         #scannedRxNumber {
+            margin-top: 10px;
             color: #6a1b9a;
             font-weight: bold;
         }
@@ -93,16 +88,43 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            margin-top: 10px;
         }
 
-        #buttonContainer button {
-            margin-top: 10px;
+        textarea {
+            width: calc(100% - 20px);
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        @media only screen and (min-width: 600px) {
+            form {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            label,
+            select,
+            input {
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+            }
         }
     </style>
 
     <!-- Add the quaggaJS library -->
     <script src="https://cdn.rawgit.com/serratus/quaggaJS/0.12.1/dist/quagga.min.js"></script>
 </head>
+
 <body>
 
     <h1>St Mary Pharmacy Delivery System</h1>
@@ -110,6 +132,13 @@
     <form id="deliveryForm">
         <label for="rxNumber">Rx Number:</label>
         <input type="text" id="rxNumber" name="rxNumber" pattern="[0-9]*" inputmode="numeric" title="Only numbers allowed">
+
+        <div id="buttonContainer">
+            <!-- Button to initiate barcode scanner for Rx number -->
+            <button type="button" onclick="scanBarcode()">Scan Rx Barcode</button>
+            <!-- Button to copy Rx number to clipboard -->
+            <button type="button" onclick="copyRxToClipboard()">Copy Rx to Clipboard</button>
+        </div>
 
         <label for="copaymentAmount">Copayment Amount ($):</label>
         <input type="text" id="copaymentAmount" name="copaymentAmount" pattern="\d*" inputmode="numeric" value="0">
@@ -130,15 +159,6 @@
 
         <!-- Photo input -->
         <input type="file" accept="image/*" id="photoInput" capture="camera">
-
-        <!-- Button container with layout adjustments -->
-        <div id="buttonContainer">
-            <!-- Button to initiate barcode scanner for Rx number -->
-            <button type="button" onclick="scanBarcode()">Scan Rx Barcode</button>
-
-            <!-- Button to copy Rx number to clipboard -->
-            <button type="button" onclick="copyRxToClipboard()">Copy Rx to Clipboard</button>
-        </div>
 
         <label for="notes">Notes:</label>
         <textarea id="notes" name="notes" rows="4" placeholder="Enter any additional notes"></textarea>
@@ -162,12 +182,8 @@
             Quagga.init({
                 inputStream: {
                     name: "Live",
-                    type: "LiveStream",
+                    type: "ImageStream",
                     target: document.querySelector('#barcodeScanner'),
-                    constraints: {
-                        width: 200,
-                        height: 100,
-                    },
                 },
                 decoder: {
                     readers: ["code_128_reader", "ean_reader", "upc_reader"],
@@ -198,7 +214,7 @@
             alert("Rx number copied to clipboard!");
         }
 
-        // Function to prompt user for GPS location
+        // Function to prompt user        // Function to prompt user for GPS location
         function getCurrentLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -209,7 +225,8 @@
                         // Call function to send message with obtained location
                         sendMessage(latitude, longitude);
                     },
-                    (error) => {                        console.error('Error getting location:', error);
+                    (error) => {
+                        console.error('Error getting location:', error);
                         alert('Failed to get current location. Please enable GPS and try again.');
                     }
                 );
@@ -290,7 +307,10 @@
             formData.append("photo", photo);
 
             // Use the fetch API to send the message and photo
-            fetch(telegramApiUrl, { method: "POST", body: formData })
+            fetch(telegramApiUrl, {
+                    method: "POST",
+                    body: formData
+                })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Telegram API response:", data);
@@ -314,7 +334,10 @@
             formData.append("text", message);
 
             // Use the fetch API to send the message
-            fetch(telegramApiUrl, { method: "POST", body: formData })
+            fetch(telegramApiUrl, {
+                    method: "POST",
+                    body: formData
+                })
                 .then(response => response.json())
                 .then(data => {
                     console.log("Telegram API response:", data);
@@ -326,6 +349,7 @@
                 });
         }
     </script>
-    
+
 </body>
+
 </html>
